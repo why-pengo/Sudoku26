@@ -5,14 +5,6 @@
 //  Created by Jon Morgan on 12/23/25.
 //
 
-
-//
-//  CellView.swift
-//  test1
-//
-//  Created by Jon Morgan on 12/21/25.
-//
-
 import SwiftUI
 
 struct CellView: View {
@@ -25,7 +17,7 @@ struct CellView: View {
                 .frame(width: cellSize, height: cellSize * 1.5)
             
             VStack(spacing: 0) {
-                CellValueView(size: cellSize * 0.5)
+                CellValueView(size: cellSize * 0.7)
                 GuessTopView(size: cellSize * 0.2)
                 GuessBottomView(size: cellSize * 0.2)
             }
