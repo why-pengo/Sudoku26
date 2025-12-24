@@ -96,6 +96,9 @@ class SudokuGame: ObservableObject, Codable {
             if checkValue(row: cell.row, col: cell.col, value: value) {
                 // Correct!
                 print("Correct value!")
+                
+                // Clear all matching guesses in the same row, column, and 3x3 block
+                clearMatchingGuesses(row: cell.row, col: cell.col, value: value)
             } else {
                 // Incorrect - you could add visual feedback here
                 print("Incorrect value!")
@@ -110,6 +113,27 @@ class SudokuGame: ObservableObject, Codable {
                 grid[cell.row][cell.col].guesses.insert(value)
             }
             highlightedValue = value
+        }
+    }
+    
+    private func clearMatchingGuesses(row: Int, col: Int, value: Int) {
+        // Clear guesses in the same row
+        for c in 0..<9 {
+            grid[row][c].guesses.remove(value)
+        }
+        
+        // Clear guesses in the same column
+        for r in 0..<9 {
+            grid[r][col].guesses.remove(value)
+        }
+        
+        // Clear guesses in the same 3x3 block
+        let boxRow = (row / 3) * 3
+        let boxCol = (col / 3) * 3
+        for r in boxRow..<boxRow + 3 {
+            for c in boxCol..<boxCol + 3 {
+                grid[r][c].guesses.remove(value)
+            }
         }
     }
     
