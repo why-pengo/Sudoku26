@@ -75,11 +75,13 @@ class SudokuGame: ObservableObject, Codable {
     func selectCell(row: Int, col: Int) {
         selectedCell = CellPosition(row: row, col: col)
         
-        if inputMode == .pencil, let value = grid[row][col].value {
+        // Set highlighted value based on the selected cell's value (works in both modes)
+        if let value = grid[row][col].value {
             highlightedValue = value
-        } else if inputMode == .pencil {
-            // In pencil mode, show highlights for guesses
+            print("DEBUG: Selected cell (\(row),\(col)) with value \(value), highlighting \(value), mode: \(inputMode)")
+        } else {
             highlightedValue = nil
+            print("DEBUG: Selected cell (\(row),\(col)) with no value, clearing highlight, mode: \(inputMode)")
         }
     }
     
@@ -105,6 +107,8 @@ class SudokuGame: ObservableObject, Codable {
             }
             
             highlightedValue = value
+            print("DEBUG: Entered value \(value) in pen mode, highlighting \(value)")
+            objectWillChange.send()
         } else {
             // Pencil mode: toggle guess
             if grid[cell.row][cell.col].guesses.contains(value) {
@@ -113,6 +117,8 @@ class SudokuGame: ObservableObject, Codable {
                 grid[cell.row][cell.col].guesses.insert(value)
             }
             highlightedValue = value
+            print("DEBUG: Toggled guess \(value) in pencil mode, highlighting \(value)")
+            objectWillChange.send()
         }
     }
     
@@ -148,13 +154,13 @@ class SudokuGame: ObservableObject, Codable {
     
     func toggleInputMode() {
         inputMode = inputMode == .pen ? .pencil : .pen
+        print("DEBUG: Toggled input mode to \(inputMode)")
         
-        // Update highlighting
+        // Maintain highlighting based on selected cell regardless of mode
         if let cell = selectedCell {
-            if inputMode == .pencil, let value = grid[cell.row][cell.col].value {
+            if let value = grid[cell.row][cell.col].value {
                 highlightedValue = value
-            } else {
-                highlightedValue = nil
+                print("DEBUG: Maintained highlight for value \(value) after mode toggle")
             }
         }
     }

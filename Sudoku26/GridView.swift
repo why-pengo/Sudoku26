@@ -23,7 +23,20 @@ struct GridView: View {
                         let gridCol = blockCol * 3 + col
                         let cell = game.grid[gridRow][gridCol]
                         let isSelected = game.selectedCell?.row == gridRow && game.selectedCell?.col == gridCol
-                        let isHighlighted = shouldHighlight(cell: cell, row: gridRow, col: gridCol)
+                        
+                        // Compute highlighting inline to ensure reactivity
+                        let isHighlighted: Bool = {
+                            guard let highlightValue = game.highlightedValue else { return false }
+                            // Highlight if cell value matches
+                            if cell.value == highlightValue {
+                                return true
+                            }
+                            // Also highlight if guesses contain the value
+                            if cell.guesses.contains(highlightValue) {
+                                return true
+                            }
+                            return false
+                        }()
                         
                         CellView(
                             cellSize: cellSize,
@@ -42,22 +55,6 @@ struct GridView: View {
             RoundedRectangle(cornerRadius: 2)
                 .stroke(Color.black, lineWidth: 3)
         )
-    }
-    
-    func shouldHighlight(cell: Cell, row: Int, col: Int) -> Bool {
-        guard let highlightValue = game.highlightedValue else { return false }
-        
-        // Highlight if cell value matches
-        if cell.value == highlightValue {
-            return true
-        }
-        
-        // In pencil mode, also highlight if guesses contain the value
-        if game.inputMode == .pencil && cell.guesses.contains(highlightValue) {
-            return true
-        }
-        
-        return false
     }
 }
 
